@@ -41,5 +41,16 @@ func main() {
 		return
 	}
 
-	fmt.Println(client.Endpoint())
+	cosmosDbName, ok := os.LookupEnv("COSMOS_DATABASE")
+	if !ok {
+		fmt.Println("COSMOS_DATABASE is not set")
+		return
+	}
+
+	database, err := client.NewDatabase(cosmosDbName)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }
