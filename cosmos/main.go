@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/data/azcosmos"
@@ -27,7 +28,13 @@ func main() {
 		EnableContentResponseOnWrite: true,
 	}
 
-	client, err := azcosmos.NewClient("", credential, &clientOptions)
+	cosmosDbEndpoint, ok := os.LookupEnv("COSMOS_DB_ENDPOINT")
+	if !ok {
+		fmt.Println("COSMOS_DB_ENDPOINT is not set")
+		return
+	}
+
+	client, err := azcosmos.NewClient(cosmosDbEndpoint, credential, &clientOptions)
 
 	if err != nil {
 		fmt.Println(err)
