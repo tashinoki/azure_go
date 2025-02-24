@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -61,5 +63,44 @@ func main() {
 	}
 
 	container, err := database.NewContainer(cosmosContainerName)
-	fmt.Println(container.ID())
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	partitionKey := azcosmos.NewPartitionKeyString("")
+	query := "SELECT * FROM c WHERE c.pk = @partitionKey"
+
+	queryOptions := azcosmos.QueryOptions{
+		QueryParameters: []azcosmos.QueryParameter{
+			{Name: "@partitionKey", Value: partitionKey},
+		},
+	}
+
+	pager := container.NewQueryItemsPager(query, partitionKey, &queryOptions)
+	for pager.More() {
+		response, err := pager.NextPage(context.TODO())
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		fmt.Println(response.Items)
+		for _, bytes := range response.Items {
+			item := Item{}
+			err := json.Unmarshal(bytes, &item)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			fmt.Println(item)
+		}
+	}
+}
+
+type Item struct {
+	Id string `json:"id"`
+	Pk string `json:"pk"`
 }
