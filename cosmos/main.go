@@ -19,7 +19,7 @@ func main() {
 		EnableContentResponseOnWrite: true,
 	}
 
-	client, err := azcosmos.NewClient("https://sci-stg-cosmosdb-sql.documents.azure.com:443/", credential, &clientOptions)
+	client, err := azcosmos.NewClient("", credential, &clientOptions)
 
 	if err != nil {
 		fmt.Println(err)
