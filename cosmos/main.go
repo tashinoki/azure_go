@@ -53,4 +53,13 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+
+	cosmosContainerName, ok := os.LookupEnv("COSMOS_CONTAINER")
+	if !ok {
+		fmt.Println("COSMOS_CONTAINER is not set")
+		return
+	}
+
+	container, err := database.NewContainer(cosmosContainerName)
+	fmt.Println(container.ID())
 }
