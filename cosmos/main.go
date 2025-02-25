@@ -69,6 +69,13 @@ func main() {
 		return
 	}
 
+	pk := azcosmos.NewPartitionKeyString("")
+	newItem = Item{Id: "1", Pk: ""}
+	newBytes := []byte{}
+
+	encoding.encode(newItem, &newBytes)
+	_, err := container.CreateItem(context.TODO(), pk, &newBytes, nil)
+
 	partitionKey := azcosmos.NewPartitionKeyString("")
 	query := "SELECT * FROM c WHERE c.pk = @partitionKey"
 
